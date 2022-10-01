@@ -20,6 +20,11 @@ int main()
 			graph.AddEdge(i - 1, i, i);
 			graph.AddEdge(i - 2, i, i);
 		}
+		for (int i = 100; i < 200; i ++)
+		{
+			graph.AddEdge(i, i + 1, i + 1);
+			graph.AddEdge(i, i + 2,  i + 2);
+		}
 		//graph.AddVertex(1);
 		//graph.AddVertex(2);
 		//graph.AddVertex(3);
