@@ -3,38 +3,39 @@
 
 #include <iostream>
 #include "Graph.cpp"
+#include "PriorityQueue.cpp"
 #include <string>
+
+static bool shouldSwap(int a, int b)
+{
+	return a > b;
+}
 
 int main()
 {
 	std::string input;
 	while (true)
 	{
-		std::cin >> input;
-		Graph<int> graph = Graph<int>();
-		graph.AddVertex(0);
-		graph.AddVertex(1);
-		for (int i = 2; i < 1000; i++)
+		//std::cin >> input;
+		//Graph<int> graph = Graph<int>();
+		PriorityQueue<int> queue = PriorityQueue<int>(shouldSwap);
+		for (int i = -10; i <= 0; i ++)
 		{
-			graph.AddVertex(i);
-			graph.AddEdge(i - 1, i, i);
-			graph.AddEdge(i - 2, i, i);
+			queue.Enqueue(i);
 		}
-		for (int i = 100; i < 200; i ++)
+		for (int i = 100; i > 0; i -= 2)
 		{
-			graph.AddEdge(i, i + 1, i + 1);
-			graph.AddEdge(i, i + 2,  i + 2);
+			queue.Enqueue(i);
 		}
-		//graph.AddVertex(1);
-		//graph.AddVertex(2);
-		//graph.AddVertex(3);
-		//graph.AddVertex(4);
-
-		//graph.AddEdge(1, 2, 2);
-		//graph.AddEdge(1, 3, 3);
-		//graph.AddEdge(2, 3, 3);
-		//graph.AddEdge(2, 4, 4);
-		//graph.AddEdge(3, 4, 4);
+		for (int i = 99; i > 0; i -= 2)
+		{
+			queue.Enqueue(i);
+		}
+		int QueueCount = queue.GetCount();
+		for (int i = 0; i < QueueCount; i ++)
+		{
+			std::cout << queue.Dequeue() << std::endl;
+		}
 		std::cin >> input;
 	}
 }

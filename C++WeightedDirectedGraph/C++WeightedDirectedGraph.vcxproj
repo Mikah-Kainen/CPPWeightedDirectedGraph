@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="C++WeightedDirectedGraph.cpp" />
     <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="PriorityQueue.cpp" />
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
