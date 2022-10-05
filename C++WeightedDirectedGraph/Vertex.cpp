@@ -31,9 +31,12 @@ private:
 public:
 	std::vector<std::shared_ptr<Edge<T>>> Connections;
 	T Value;
+	int Distance;
+	bool WasVisited;
+	std::shared_ptr<Vertex<T>> Founder;
 
 	Vertex(T value)
-		:Value{value}
+		:Value{ value }, Distance{ INT32_MAX }, WasVisited{ false }, Founder{ nullptr }
 	{
 
 	}

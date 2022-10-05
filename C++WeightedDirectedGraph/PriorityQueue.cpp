@@ -1,4 +1,5 @@
 
+#pragma once
 #include <functional>
 #include <vector>
 
@@ -9,7 +10,7 @@ class PriorityQueue
 {
 private:
 	std::vector<T> backingArray;
-	bool (*shouldSwap)(int, int);
+	bool (*shouldSwap)(T, T);
 
 	int parentIndex(int targetIndex)
 	{
@@ -35,13 +36,14 @@ private:
 
 
 public:
-	PriorityQueue(bool (*shouldSwap)(int, int))
+	PriorityQueue(bool (*shouldSwap)(T, T))
 		: shouldSwap{shouldSwap}
 	{
 	}
 
 	~PriorityQueue()
 	{
+		backingArray = std::vector<T>();
 	}
 
 	void Enqueue(T newValue)

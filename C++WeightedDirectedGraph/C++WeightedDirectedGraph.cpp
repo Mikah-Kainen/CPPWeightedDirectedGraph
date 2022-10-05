@@ -3,13 +3,14 @@
 
 #include <iostream>
 #include "Graph.cpp"
+#include "Vertex.cpp"
 #include "PriorityQueue.cpp"
 #include <string>
 
-static bool shouldSwap(int a, int b)
-{
-	return a > b;
-}
+//static bool shouldSwap(std::shared_ptr<Vertex<int>> a, std::shared_ptr<Vertex<int>> b)
+//{
+//	return a->Value < b->Value;
+//}
 
 int main()
 {
@@ -17,26 +18,45 @@ int main()
 	while (true)
 	{
 		//std::cin >> input;
-		//Graph<int> graph = Graph<int>();
-		PriorityQueue<int> queue = PriorityQueue<int>(shouldSwap);
-		for (int i = -10; i <= 0; i ++)
+		Graph<int> graph = Graph<int>();
+		for (int i = 0; i < 35; i ++)
 		{
-			queue.Enqueue(i);
+			graph.AddVertex(i);
 		}
-		for (int i = 100; i > 0; i -= 2)
+		for (int a = 1; a < 10; a++)
 		{
-			queue.Enqueue(i);
+			graph.AddEdge(0, a, a);
+			for (int b = 11; b < 20; b ++)
+			{
+				graph.AddEdge(a, a, b);
+				for (int c = 21; c < 30; c ++)
+				{
+					graph.AddEdge(b, b, c);
+					graph.AddEdge(c, 1, 35);
+				}
+			}
 		}
-		for (int i = 99; i > 0; i -= 2)
-		{
-			queue.Enqueue(i);
-		}
-		int QueueCount = queue.GetCount();
-		for (int i = 0; i < QueueCount; i ++)
-		{
-			std::cout << queue.Dequeue() << std::endl;
-		}
-		std::cin >> input;
+		std::vector<std::shared_ptr<Vertex<int>>> path = graph.GetPath(0, 35);
+		//PriorityQueue<std::shared_ptr<Vertex<int>>> queue = PriorityQueue<std::shared_ptr<Vertex<int>>>(shouldSwap);
+		//for (int i = -10; i <= 0; i ++)
+		//{
+		//	queue.Enqueue(std::make_shared<Vertex<int>>(i));
+		//}
+		//for (int i = 100; i > 0; i -= 2)
+		//{
+		//	queue.Enqueue(std::make_shared<Vertex<int>>(i));
+		//}
+		//for (int i = 99; i > 0; i -= 2)
+		//{
+		//	queue.Enqueue(std::make_shared<Vertex<int>>(i));
+		//}
+		//int QueueCount = queue.GetCount();
+		//std::cout << std::endl;
+		//for (int i = 0; i < QueueCount; i ++)
+		//{
+		//	std::cout << queue.Dequeue()->Value << std::endl;
+		//}
+		//std::cin >> input;
 	}
 }
 

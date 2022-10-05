@@ -1,11 +1,20 @@
 
 #include "Vertex.cpp"
+#include "PriorityQueue.cpp"
+#include <deque>
 #include <vector>
+
+template <typename T>
+bool shouldSwap(T a, T b)
+{
+	return a->Distance < b->Distance;
+}
 
 template <typename T>
 class Graph
 {
 private:
+
 
 	bool AddEdge(std::shared_ptr<Vertex<T>> startVertex, int weight, std::shared_ptr<Vertex<T>> endVertex)
 	{
@@ -64,7 +73,7 @@ private:
 	bool RemoveEdge(std::shared_ptr<Vertex<T>> startVertex, std::shared_ptr<Vertex<T>> endVertex)
 	{
 		if (!startVertex ||
-			!endVertex || 
+			!endVertex ||
 			!startVertex->ContainsEdge(endVertex))
 		{
 			return false;
@@ -80,11 +89,12 @@ private:
 		return false;
 	}
 
+
 public:
 	std::vector<std::shared_ptr<Vertex<T>>> Vertices;
 
 	Graph()
-		:Vertices{std::vector<std::shared_ptr<Vertex<T>>>()}
+		:Vertices{ std::vector<std::shared_ptr<Vertex<T>>>() }
 	{
 
 	}
@@ -129,5 +139,62 @@ public:
 	bool RemoveEdge(T startVertexValue, int weight, T endVertexValue)
 	{
 		return RemoveEdge(GetVertex(startVertexValue), weight, GetVertex(endVertexValue));
+	}
+
+	std::vector<std::shared_ptr<Vertex<T>>> GetPath(T startValue, T targetValue)
+	{
+		std::vector<std::shared_ptr<Vertex<T>>> path = std::vector<std::shared_ptr<Vertex<T>>>();
+		std::shared_ptr<Vertex<T>> startVertex = GetVertex(startValue);
+		std::shared_ptr<Vertex<T>> targetVertex = GetVertex(targetValue);
+		if (!startVertex || !targetVertex)
+		{
+			return path;
+		}
+
+		PriorityQueue<std::shared_ptr<Vertex<T>>> backingQueue(&shouldSwap<std::shared_ptr<Vertex<T>>>);
+
+		startVertex->Distance = 0;
+		for (int i = 0; i < startVertex->Connections.size(); i++)
+		{
+			startVertex->Connections[i]->EndVertex->Founder = startVertex;
+			startVertex->Connections[i]->EndVertex->Distance = startVertex->Connections[i]->Weight;
+			backingQueue.Enqueue(startVertex->Connections[i]->EndVertex);
+		}
+		startVertex->WasVisited = true;
+		std::shared_ptr<Vertex<T>> current;
+		while (backingQueue.GetCount() > 0)
+		{
+			current = backingQueue.Dequeue();
+			if (current == targetVertex)
+			{
+				break;
+			}
+			for (int i = 0; i < current->Connections.size(); i++)
+			{
+				if (current->Distance + current->Connections[i]->Weight < current->Connections[i]->EndVertex->Distance)
+				{
+					current->Connections[i]->EndVertex->Founder = current;
+					current->Connections[i]->EndVertex->Distance = current->Connections[i]->Weight;
+					current->Connections[i]->EndVertex->WasVisited = false;
+					backingQueue.Enqueue(current->Connections[i]->EndVertex);
+				}
+			}
+			current->WasVisited = true;
+		}
+
+		std::deque<std::shared_ptr<Vertex<T>>> supportDeque;
+		while (current != startVertex)
+		{
+			supportDeque.push_back(current);
+			current = current->Founder;
+		}
+		path.push_back(current);
+		while (supportDeque.size() > 0)
+		{
+			path.push_back(supportDeque.back());
+			supportDeque.pop_back();
+		}
+
+		return path;
 	}
 };
