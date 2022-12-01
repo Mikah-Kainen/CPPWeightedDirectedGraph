@@ -19,24 +19,29 @@ int main()
 	{
 		//std::cin >> input;
 		Graph<int> graph = Graph<int>();
-		for (int i = 0; i < 35; i ++)
-		{
-			graph.AddVertex(i);
-		}
-		for (int a = 1; a < 10; a++)
-		{
-			graph.AddEdge(0, a, a);
-			for (int b = 11; b < 20; b ++)
-			{
-				graph.AddEdge(a, a, b);
-				for (int c = 21; c < 30; c ++)
-				{
-					graph.AddEdge(b, b, c);
-					graph.AddEdge(c, 1, 35);
-				}
-			}
-		}
-		std::vector<std::shared_ptr<Vertex<int>>> path = graph.GetPath(0, 35);
+
+
+		//for (int i = 0; i < 36; i ++)
+		//{
+		//	graph.AddVertex(i);
+		//}
+		//for (int a = 1; a < 10; a++)
+		//{
+		//	graph.AddEdge(0, a, a);
+		//	for (int b = 10; b < 20; b ++)
+		//	{
+		//		graph.AddEdge(a, b, b);
+		//		for (int c = 20; c < 30; c ++)
+		//		{
+		//			graph.AddEdge(b, c, c);
+		//			graph.AddEdge(c, 1, 35);
+		//		}
+		//	}
+		//}
+		std::vector<std::shared_ptr<Vertex<int>>> path = graph.AStar(0, 35);
+	}
+}
+
 		//PriorityQueue<std::shared_ptr<Vertex<int>>> queue = PriorityQueue<std::shared_ptr<Vertex<int>>>(shouldSwap);
 		//for (int i = -10; i <= 0; i ++)
 		//{
@@ -57,16 +62,3 @@ int main()
 		//	std::cout << queue.Dequeue()->Value << std::endl;
 		//}
 		//std::cin >> input;
-	}
-}
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
