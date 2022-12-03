@@ -79,7 +79,7 @@ private:
 		return true;
 	}
 
-	bool RemoveEdge(std::shared_ptr<Vertex<T>> startVertex, std::shared_ptr<Vertex<T>> endVertex)
+	bool RemoveEdge(std::shared_ptr<Vertex<T>> startVertex, int weight, std::shared_ptr<Vertex<T>> endVertex)
 	{
 		if (!startVertex ||
 			!endVertex ||
@@ -87,11 +87,15 @@ private:
 		{
 			return false;
 		}
-		for (int i = 0; i < startVertex->Edges.size(); i++)
+		for (int i = 0; i < startVertex->Connections.size(); i++)
 		{
-			if (startVertex->Edges[i]->EndVertex == endVertex)
+			if (startVertex->Connections[i]->EndVertex == endVertex)
 			{
-				startVertex->Edges[i]->EndVertex = nullptr;
+				//startVertex->Connections[i]->EndVertex = nullptr;
+				startVertex->Connections.erase(startVertex->Connections.begin() + i);
+				//std::vector<int> test = std::vector<int>();
+				//test.erase(test.begin() + 0);
+				//new std::vector<int>::const_iterator(,);
 				return true;
 			}
 		}
@@ -110,7 +114,16 @@ public:
 
 	~Graph()
 	{
-		Vertices = std::vector<std::shared_ptr<Vertex<T>>>();
+		while(Vertices.size() > 0)
+		{
+			std::shared_ptr<Vertex<T>> current = Vertices.back();
+			while (current->Connections.size() > 0)
+			{
+				//current->Connections.back();
+				delete the Connections;
+			}
+			Vertices.pop_back();
+		}
 	}
 
 	int GetCount()
@@ -132,7 +145,7 @@ public:
 
 	void AddVertex(T Value, int x, int y)
 	{
-		Vertices.push_back(std::make_shared<Vertex<T>>(Value, int x, int y));
+		Vertices.push_back(std::make_shared<Vertex<T>>(Value, x, y));
 	}
 
 	bool AddEdge(T startVertexValue, int weight, T endVertexValue)
