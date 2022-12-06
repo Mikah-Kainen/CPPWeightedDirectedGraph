@@ -20,6 +20,7 @@ public:
 
 	~Edge()
 	{
+		EndVertex = nullptr;
 	}
 };
 
@@ -45,7 +46,15 @@ public:
 
 	~Vertex()
 	{
-		Connections.empty();
+	}
+
+	void CleanUp()
+	{
+		while (Connections.size() > 0)
+		{
+			Connections.pop_back();
+		}
+		Founder = nullptr;
 	}
 
 	bool AddEdge(int weight, std::shared_ptr<Vertex<T>> endVertex)

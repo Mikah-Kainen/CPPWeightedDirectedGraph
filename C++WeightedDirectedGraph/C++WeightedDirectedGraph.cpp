@@ -36,7 +36,16 @@ int main()
 		graph.AddEdge(5, 1, 6);
 		graph.AddEdge(6, 1, 7);
 
+		graph.RemoveEdge(1, 5, 2);
+		graph.RemoveEdge(4, 4, 5);
+		graph.RemoveVertex(3);
+
 		auto path = graph.AStar(1, 7);
+	}
+}
+
+#pragma region congaline
+
 		//int height = 3;
 		//int width = 3;
 		//for (int y = 0; y < height; y++)
@@ -58,8 +67,6 @@ int main()
 		//}
 		//graph.RemoveEdge(1, 6, 8);
 		//auto path = graph.AStar(0, (height - 1) * height + width - 1);
-	}
-}
 
 //for (int i = 0; i < 36; i ++)
 //{
@@ -101,3 +108,5 @@ int main()
 //	std::cout << queue.Dequeue()->Value << std::endl;
 //}
 //std::cin >> input;
+
+#pragma endregion congaline

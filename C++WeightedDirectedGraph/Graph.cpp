@@ -54,29 +54,33 @@ private:
 
 	bool RemoveVertex(std::shared_ptr<Vertex<T>> targetVertex)
 	{
-		if (!Contains(targetVertex))
+		if (!targetVertex)
 		{
 			return false;
 		}
-		for (int i = 0; i < targetVertex->Edges.size(); i++)
-		{
-			targetVertex->Edges[i] = nullptr;
-		}
+		bool wasContained = false;
 		for (int i = 0; i < Vertices.size(); i++)
 		{
-			if (Vertices[i] == targetVertex)
+			if (Vertices[i] != targetVertex)
 			{
-				Vertices[i] == nullptr;
-			}
-			for (int x = 0; x < Vertices[i]->Edges.size(); x++)
-			{
-				if (Vertices[i]->Edges[x]->EndVertex == targetVertex)
+				for (int x = 0; x < Vertices[i]->Connections.size(); x++)
 				{
-					Vertices[i]->Edges[x]->EndVertex = nullptr;
+					if (Vertices[i]->Connections[x]->EndVertex == targetVertex)
+					{
+						Vertices[i]->Connections.erase(Vertices[i]->Connections.begin() + x/*--*/);
+						//Vertices[i]->Connections[x]->EndVertex = nullptr;
+						x--;
+					}
 				}
 			}
+			else
+			{
+				Vertices[i]->CleanUp();
+				wasContained = true;
+				Vertices.erase(Vertices.begin() + i--);
+			}
 		}
-		return true;
+		return wasContained;
 	}
 
 	bool RemoveEdge(std::shared_ptr<Vertex<T>> startVertex, int weight, std::shared_ptr<Vertex<T>> endVertex)
@@ -114,14 +118,14 @@ public:
 
 	~Graph()
 	{
-		while(Vertices.size() > 0)
+		while (Vertices.size() > 0)
 		{
-			std::shared_ptr<Vertex<T>> current = Vertices.back();
-			while (current->Connections.size() > 0)
-			{
-				//current->Connections.back();
-				delete the Connections;
-			}
+			//std::shared_ptr<Vertex<T>> current = Vertices.back();
+			//while (current->Connections.size() > 0)
+			//{
+			// 	current->Connections.pop_back();
+			//}
+			Vertices.back()->Founder = nullptr;
 			Vertices.pop_back();
 		}
 	}
@@ -241,7 +245,7 @@ public:
 			path.push_back(targetVertex);
 			return path;
 		}
-		
+
 		PriorityQueue<std::shared_ptr<Vertex<T>>> backingQueue(&shouldSwapAStar<std::shared_ptr<Vertex<T>>>);
 
 		startVertex->Distance = 0;
@@ -274,6 +278,10 @@ public:
 				}
 			}
 			current->WasVisited = true;
+		}
+		if (current != targetVertex)
+		{
+			return std::vector<std::shared_ptr<Vertex<T>>>();
 		}
 
 		std::deque<std::shared_ptr<Vertex<T>>> supportDeque;
