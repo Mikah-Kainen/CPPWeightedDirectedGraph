@@ -65,7 +65,8 @@ private:
 			{
 				for (int x = 0; x < Vertices[i]->Connections.size(); x++)
 				{
-					if (Vertices[i]->Connections[x]->EndVertex == targetVertex)
+					std::shared_ptr<Vertex<T>> endVertex = Vertices[i]->Connections[x]->EndVertex.lock();
+					if (endVertex == targetVertex)
 					{
 						Vertices[i]->Connections.erase(Vertices[i]->Connections.begin() + x/*--*/);
 						//Vertices[i]->Connections[x]->EndVertex = nullptr;
@@ -93,7 +94,8 @@ private:
 		}
 		for (int i = 0; i < startVertex->Connections.size(); i++)
 		{
-			if (startVertex->Connections[i]->EndVertex == endVertex)
+			std::shared_ptr<Vertex<T>> currentEndVertex = startVertex->Connections[i]->EndVertex.lock();
+			if (currentEndVertex == endVertex)
 			{
 				//startVertex->Connections[i]->EndVertex = nullptr;
 				startVertex->Connections.erase(startVertex->Connections.begin() + i);
@@ -125,7 +127,8 @@ public:
 			//{
 			// 	current->Connections.pop_back();
 			//}
-			Vertices.back()->Founder = nullptr;
+			
+			//Vertices.back()->Founder = nullptr;
 			Vertices.pop_back();
 		}
 	}
@@ -252,10 +255,14 @@ public:
 		startVertex->FinalDistance = Heuristic(startVertex, targetVertex);
 		for (int i = 0; i < startVertex->Connections.size(); i++)
 		{
-			startVertex->Connections[i]->EndVertex->Founder = startVertex;
-			startVertex->Connections[i]->EndVertex->Distance = startVertex->Connections[i]->Weight;
-			startVertex->Connections[i]->EndVertex->FinalDistance = startVertex->Connections[i]->Weight + Heuristic(startVertex->Connections[i]->EndVertex, targetVertex);
-			backingQueue.Enqueue(startVertex->Connections[i]->EndVertex);
+			std::shared_ptr<Vertex<T>> endVertex = startVertex->Connections[i]->EndVertex.lock();
+			if (endVertex == nullptr)
+			{
+			}
+			endVertex->Founder = startVertex;
+			endVertex->Distance = startVertex->Connections[i]->Weight;
+			endVertex->FinalDistance = startVertex->Connections[i]->Weight + Heuristic(endVertex, targetVertex);
+			backingQueue.Enqueue(endVertex);
 		}
 		startVertex->WasVisited = true;
 		std::shared_ptr<Vertex<T>> current;
@@ -268,13 +275,17 @@ public:
 			}
 			for (int i = 0; i < current->Connections.size(); i++)
 			{
-				if (current->Distance + current->Connections[i]->Weight < current->Connections[i]->EndVertex->Distance)
+				std::shared_ptr<Vertex<T>> endVertex = current->Connections[i]->EndVertex.lock();
+				if (endVertex == nullptr)
 				{
-					current->Connections[i]->EndVertex->Founder = current;
-					current->Connections[i]->EndVertex->Distance = current->Connections[i]->Weight + current->Distance;
-					current->Connections[i]->EndVertex->FinalDistance = current->Connections[i]->Weight + current->Distance + Heuristic(current->Connections[i]->EndVertex, targetVertex);
-					current->Connections[i]->EndVertex->WasVisited = false;
-					backingQueue.Enqueue(current->Connections[i]->EndVertex);
+				}
+				if (current->Distance + current->Connections[i]->Weight < endVertex->Distance)
+				{
+					endVertex->Founder = current;
+					endVertex->Distance = current->Connections[i]->Weight + current->Distance;
+					endVertex->FinalDistance = current->Connections[i]->Weight + current->Distance + Heuristic(endVertex, targetVertex);
+					endVertex->WasVisited = false;
+					backingQueue.Enqueue(endVertex);
 				}
 			}
 			current->WasVisited = true;
@@ -288,7 +299,7 @@ public:
 		while (current != startVertex)
 		{
 			supportDeque.push_back(current);
-			current = current->Founder;
+			current = current->Founder.lock();
 		}
 		path.push_back(current);
 		while (supportDeque.size() > 0)

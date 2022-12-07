@@ -36,9 +36,9 @@ int main()
 		graph.AddEdge(5, 1, 6);
 		graph.AddEdge(6, 1, 7);
 
-		graph.RemoveEdge(1, 5, 2);
-		graph.RemoveEdge(4, 4, 5);
-		graph.RemoveVertex(3);
+		//graph.RemoveEdge(1, 5, 2);
+		//graph.RemoveEdge(4, 4, 5);
+		//graph.RemoveVertex(3);
 
 		auto path = graph.AStar(1, 7);
 	}

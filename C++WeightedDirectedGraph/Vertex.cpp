@@ -11,16 +11,16 @@ class Edge
 private:
 public:
 	int Weight;
-	std::shared_ptr<Vertex<T>> EndVertex;
+	std::weak_ptr<Vertex<T>> EndVertex;
 
 	Edge(int weight, std::shared_ptr<Vertex<T>> vertex)
-		:Weight{weight}, EndVertex{vertex}
+		:Weight{weight}, EndVertex{std::weak_ptr<Vertex<T>>(vertex)}
 	{
 	}
 
 	~Edge()
 	{
-		EndVertex = nullptr;
+		//EndVertex = nullptr;
 	}
 };
 
@@ -36,12 +36,11 @@ public:
 	float Distance;
 	float FinalDistance;
 	bool WasVisited;
-	std::shared_ptr<Vertex<T>> Founder;
+	std::weak_ptr<Vertex<T>> Founder;
 
 	Vertex(T value, int x, int y)
-		:Value{ value }, X{ x }, Y{ y }, Distance{ FLT_MAX }, FinalDistance{ FLT_MAX }, WasVisited { false }, Founder{ nullptr }
+		:Value{ value }, X{ x }, Y{ y }, Distance{ FLT_MAX }, FinalDistance{ FLT_MAX }, WasVisited { false }, Founder{}
 	{
-
 	}
 
 	~Vertex()
@@ -54,7 +53,7 @@ public:
 		{
 			Connections.pop_back();
 		}
-		Founder = nullptr;
+		//Founder = nullptr;
 	}
 
 	bool AddEdge(int weight, std::shared_ptr<Vertex<T>> endVertex)
@@ -72,7 +71,7 @@ public:
 	{
 		for (int i = 0; i < Connections.size(); i ++)
 		{
-			if (Connections[i]->EndVertex == endVertex)
+			if (Connections[i]->EndVertex.lock() == endVertex)
 			{
 				return true;
 			}
